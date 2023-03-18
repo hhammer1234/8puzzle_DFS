@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type puzzle struct {
 	input  [3][3]int         //입력을 받고 움직임이 이루어질 판
@@ -84,15 +87,16 @@ func (r *puzzle) explore(in int) { // 실제 탐색을 실행하는 함수
 		r.stack[i] = r.input // stack[노드번호]에 현재 판의 상태를 쌓음
 		upperlevel := 0      //더이상 갈 곳이 없을 때가 반복될 때 몇개의 층을 다시 올라가야하는지 저장하는 변수
 		for arrow := 0; arrow <= 3; arrow++ {
-			//fmt.Println(arrow, tempstate, r.historyCheck(arrow)) //debug용
+			//fmt.Println(arrow, upperlevel, r.historyCheck(arrow)) //debug용
 			if r.historyCheck(arrow) { //true는 옛날이랑 같은 상태가 없는 것
 				if r.change(uint8(arrow)) { //change가 성공하면 true를 반환함
 					//fmt.Print(arrow) //디버그용
+					upperlevel = 0
 					r.count++
 					arrow = 10 //for문 탈출
-					upperlevel = 0
 				}
 			} else { //옛날이랑 같은 상태가 있는 경우
+				fmt.Print(upperlevel)
 				r.input = r.stack[i-upperlevel] //upperlevel만큼 올라가서 판을 갱신
 				upperlevel++                    //갱신 이후에 history에서 같은 것을 또 만날 경우 더 위에 층을 불러오기 위함.
 			}
@@ -105,6 +109,8 @@ func main() {
 	pan.target = [3][3]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 0}} //타겟 지정
 	pan.inputClean()
 	fmt.Println("연산 시작 기다려주세용.")
+	startTime := time.Now()
 	pan.explore(-1)  //최대 루프 횟수 지정 -1은 int64의 최대값
 	pan.printClean() //결과 출력
+	fmt.Println("연산에 걸린 시간(초)): ", time.Since(startTime).Seconds())
 }
