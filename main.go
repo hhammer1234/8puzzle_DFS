@@ -78,29 +78,29 @@ func (r *puzzle) explore(in int) { // 실제 탐색을 실행하는 함수
 		in = 9223372036854775807 //int64의 최대값
 	}
 	r.count = 0
+	upperlevel := 0            //더이상 갈 곳이 없을 때가 반복될 때 몇개의 층을 다시 올라가야하는지 저장하는 변수
 	for i := 0; i <= in; i++ { // in번 실행
 		if r.input == r.target { //타겟을 만나면 종료
 			fmt.Println("eureka! change 횟수는 ", r.count, "입니다.")
 			fmt.Println("만들어진 노드 수는 ", i, "입니다.")
 			return
 		}
-		r.stack[i] = r.input // stack[노드번호]에 현재 판의 상태를 쌓음
-		upperlevel := 0      //더이상 갈 곳이 없을 때가 반복될 때 몇개의 층을 다시 올라가야하는지 저장하는 변수
 		for arrow := 0; arrow <= 3; arrow++ {
-			//fmt.Println(arrow, upperlevel, r.historyCheck(arrow)) //debug용
-			if r.historyCheck(arrow) { //true는 옛날이랑 같은 상태가 없는 것
+			fmt.Println("count: ", r.count, "arrow:", arrow, "ulevel:", upperlevel, r.historyCheck(arrow)) //디버그용
+			if r.historyCheck(arrow) {                                                                     //true는 옛날이랑 같은 상태가 없는 것
 				if r.change(uint8(arrow)) { //change가 성공하면 true를 반환함
 					//fmt.Print(arrow) //디버그용
 					upperlevel = 0
 					r.count++
-					arrow = 10 //for문 탈출
+					r.stack[r.count] = r.input // stack[노드번호]에 현재 판의 상태를 쌓음
+					arrow = 10                 //for문 탈출
 				}
-			} else { //옛날이랑 같은 상태가 있는 경우
-				fmt.Print(upperlevel)
-				r.input = r.stack[i-upperlevel] //upperlevel만큼 올라가서 판을 갱신
-				upperlevel++                    //갱신 이후에 history에서 같은 것을 또 만날 경우 더 위에 층을 불러오기 위함.
+			} else if arrow == 3 { //옛날이랑 같은 상태가 있는 경우
+				r.input = r.stack[r.count-upperlevel] //upperlevel만큼 올라가서 판을 갱신
+				upperlevel++                          //갱신 이후에 history에서 같은 것을 또 만날 경우 더 위에 층을 불러오기 위함.
 			}
 		}
+
 	}
 }
 
