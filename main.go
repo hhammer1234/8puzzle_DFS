@@ -86,8 +86,8 @@ func (r *puzzle) explore(in int) { // 실제 탐색을 실행하는 함수
 			return
 		}
 		for arrow := 0; arrow <= 3; arrow++ {
-			fmt.Println("count: ", r.count, "arrow:", arrow, "ulevel:", upperlevel, r.historyCheck(arrow)) //디버그용
-			if r.historyCheck(arrow) {                                                                     //true는 옛날이랑 같은 상태가 없는 것
+			//fmt.Println("count: ", r.count, "arrow:", arrow, "ulevel:", upperlevel, r.historyCheck(arrow)) //디버그용
+			if r.historyCheck(arrow) { //true는 옛날이랑 같은 상태가 없는 것
 				if r.change(uint8(arrow)) { //change가 성공하면 true를 반환함
 					//fmt.Print(arrow) //디버그용
 					upperlevel = 0
@@ -95,12 +95,12 @@ func (r *puzzle) explore(in int) { // 실제 탐색을 실행하는 함수
 					r.stack[r.count] = r.input // stack[노드번호]에 현재 판의 상태를 쌓음
 					arrow = 10                 //for문 탈출
 				}
-			} else if arrow == 3 { //옛날이랑 같은 상태가 있는 경우
+			} else if arrow == 3 { //옛날이랑 같은 상태가 있는 경우, 그리고 모든 방향을 시도해보았을 경우
 				r.input = r.stack[r.count-upperlevel] //upperlevel만큼 올라가서 판을 갱신
 				upperlevel++                          //갱신 이후에 history에서 같은 것을 또 만날 경우 더 위에 층을 불러오기 위함.
 			}
 		}
-
+		//r.printClean()
 	}
 }
 
